@@ -9,6 +9,11 @@ const products = require('./controller/api/v1');
 //products.products_transactions();
 
 
+//json body parser
+server.use(express.json());
+//url body parser
+server.use(express.urlencoded({extended:true}));
+
 
 //router middleware
 server.use('/',require('./router'));
