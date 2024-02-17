@@ -1,6 +1,7 @@
 const express = require('express');
 const port = 8000;
 const server = express();
+const cors = require('cors');
 //database stup
 const db = require('./config/Database');
 //controller to seed database
@@ -17,7 +18,7 @@ server.use(express.urlencoded({extended:true}));
 
 //router middleware
 server.use('/',require('./router'));
-
+server.use(cors());
 server.listen(port,(err)=>{
     if(err){
         console.log("Error in creating server",err.message);
