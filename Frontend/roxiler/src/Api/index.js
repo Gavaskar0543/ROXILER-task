@@ -1,3 +1,4 @@
+import {API_URLS} from '../Utils'
 const customFetch = async (url, { body, ...customConfig }) => {
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -37,4 +38,11 @@ const customFetch = async (url, { body, ...customConfig }) => {
       };
     }
   };
+
+
+  export const getSales = (month) =>{
+    return customFetch(API_URLS.sales(month),{
+      method:'GET'
+    })
+  }
   

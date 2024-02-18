@@ -77,11 +77,12 @@ module.exports.statistic = async (month) => {
       const totalUnsoldItems = await calculateTotalUnsoldItems(month);
 
       // Return the statistics as JSON response
-      return {
+      let saleReport = {
         totalSaleAmout:  totalSaleAmount,
         totalSoldItems:  totalSoldItems,
         totalUnsoldItems:  totalUnsoldItems
       };
+      return saleReport;
   } catch (error) {
       console.log('Error calculating statistics:', error.message);
       
@@ -187,7 +188,7 @@ module.exports.pieChart = async (month) => {
 
 module.exports.combinedData = async (req, res) => {
   try {
-      const month = req.body.month; // Assuming the month is sent in the request body
+      const month = req.params.month; // Assuming the month is sent in the request body
 
       // Fetch data from the three APIs concurrently using Promise.all
       const [transactionsData, statisticsData, barChartData, pieChartData] = await Promise.all([
@@ -206,8 +207,10 @@ module.exports.combinedData = async (req, res) => {
       };
 
       // Return the combined data as a JSON response
-      console.log(combinedData)
-      res.status(200).json(combinedData);
+      res.status(200).json({
+        combinedData,
+        success:true
+      });
   } catch (error) {
       console.error('Error fetching or combining data:', error.message);
       res.status(500).json({ error: 'Internal server error' });

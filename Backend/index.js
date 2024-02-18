@@ -15,10 +15,10 @@ server.use(express.json());
 //url body parser
 server.use(express.urlencoded({extended:true}));
 
-
+server.use(cors());
 //router middleware
 server.use('/',require('./router'));
-server.use(cors());
+
 server.listen(port,(err)=>{
     if(err){
         console.log("Error in creating server",err.message);

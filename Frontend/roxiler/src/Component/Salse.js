@@ -1,10 +1,14 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import styled from 'styled-components';
+import {getSales} from '../Api'
+import BarChart from './BarChart';
+import PieChart from './PieChart';
+import Statistic from './Statistic';
 
 const Table = styled.table`
-    width: 100%;
+    width: 80%;
     border-collapse: collapse;
-    margin-left:5%;
+    margin-left:10%;
     margin-top:2%;
 `;
 
@@ -36,8 +40,45 @@ align-items:center;
 justify-content:center;
 `
 
+const StyledTd = styled.td`
+  max-width: 200px; 
+  white-space: nowrap;
+  overflow:hidden;
+  text-overflow: ellipsis;
+`;
+
 export default function Sales() {
-    let productData = [];
+    const [selectedMonth, setSelectedMonth] = useState('March');
+    const [productData, setProductData] = useState([]);
+    const [statistic,setStatistic] = useState('');
+    
+    useEffect( () =>{
+
+        const fetchData = async () =>{
+        const response = await getSales(selectedMonth);
+        if(response.success){
+            setProductData(response.data.combinedData.transactions.product);
+            
+           setStatistic(response.data.combinedData.statistics);
+          
+            
+        }
+        else{
+            console.log('no response found');
+        }}
+        fetchData()
+
+    },[selectedMonth]) 
+
+    
+
+    // Function to handle changes in the selected month
+    const handleMonthChange = (event) => {
+        setSelectedMonth(event.target.value);
+       
+        console.log('Selected month:', event.target.value);
+    };
+
     // Array of month names
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -52,12 +93,12 @@ export default function Sales() {
                 <input type='text' placeholder='search transaction'/>
             </div>
             <div>
-                <select>
-                    <option>Select Month</option>
-                    {months.map((month, index) => (
-                        <option key={index} value={month}>{month}</option>
-                    ))}
-                </select>
+            <select value={selectedMonth} onChange={handleMonthChange}>
+            <option value="">Select Month</option>
+            {months.map((month, index) => (
+                <option key={index} value={month}>{month}</option>
+            ))}
+        </select>
             </div>
         </Box>
             <Table>
@@ -76,15 +117,16 @@ export default function Sales() {
                 <tbody>
                     {productData.map((product, index) => (
                         <tr key={index}>
+                            <Td>{index}</Td>
                             <Td>{product.title}</Td>
+                            <StyledTd>{product.description}</StyledTd>
                             <Td>{product.price}</Td>
-                            <Td>{product.description}</Td>
                             <Td>{product.category}</Td>
-                            <Td>
-                                <Img src={product.image} alt={product.title} />
-                            </Td>
                             <Td>{product.sold ? 'Yes' : 'No'}</Td>
-                            <Td>{product.dateOfSale}</Td>
+                            <StyledTd>
+                                {product.image}
+                            </StyledTd>
+                            
                         </tr>
                     ))}
                 </tbody>
@@ -97,6 +139,8 @@ export default function Sales() {
                    <button>Next</button>
                 </div>
             </Buttons>
+            <Statistic currentMonth={selectedMonth} currentStatistic={statistic} />
+          
         </>
     );
 }
